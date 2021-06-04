@@ -1,0 +1,176 @@
+// JavaScript Document
+var Cookie = {  
+    
+  key: 'cookies',  
+    
+  set: function(key, value) {  
+   var cookies = this.getCookies();  
+   cookies[key] = value;  
+   var src = Object.toJSON(cookies).toString();  
+   this.setCookie(this.key, src);  
+  },  
+    
+  get: function(key){  
+   if (this.exists(key)) {  
+    var cookies = this.getCookies();  
+    return cookies[key];  
+   }  
+   if (arguments.length == 2) {  
+    return arguments[1];  
+   }  
+   return;  
+  },  
+    
+  exists: function(key){  
+   return key in this.getCookies();  
+  },  
+    
+  clear: function(key){  
+   var cookies = this.getCookies();  
+   delete cookies[key];  
+   var src = Object.toJSON(cookies).toString();  
+   this.setCookie(this.key, src);  
+  },  
+    
+  getCookies: function() {  
+   return this.hasCookie(this.key) ? this.getCookie(this.key).evalJSON(true) : {};  
+  },  
+    
+  hasCookie: function(key) {  
+   return this.getCookie(key) != null;  
+  },  
+   
+  setCookie: function(key,value) {  
+   var expires = new Date();  
+   expires.setTime(expires.getTime()+60*60*24*365)  
+   document.cookie = key+'='+escape(value)+'; expires='+expires+'; path=/';  
+  },  
+   
+  getCookie: function(key) {  
+   var cookie = key+'=';  
+   var array = document.cookie.split(';');  
+   for (var i = 0; i < array.length; i++) {  
+    var c = array[i];  
+    while (c.charAt(0) == ' '){  
+     c = c.substring(1, c.length);  
+    }  
+    if (c.indexOf(cookie) == 0) {  
+     var result = c.substring(cookie.length, c.length);  
+     return unescape(result);  
+    };  
+   }  
+   return null;  
+  }  
+ } 
+ 
+/*
+Cookie.get(key, default);  
+Cookie.set(key, value);  
+Cookie.clear(key);  
+Cookie.exists(key); 
+*/
+
+function gridlistI(whatI){
+
+if (whatI=="0"){
+	$("GRID_LIST_1").src='i/layout/button_grid_on.png'
+	$("GRID_LIST_2").src='i/layout/button_list_off.png';
+	$("GRID_LIST_3").src='i/layout/button_half_off.png';
+}else if (whatI=="1"){
+	$("GRID_LIST_1").src='i/layout/button_grid_off.png'
+	$("GRID_LIST_2").src='i/layout/button_list_on.png';
+	$("GRID_LIST_3").src='i/layout/button_half_off.png';
+}else if (whatI=="2"){
+	$("GRID_LIST_1").src='i/layout/button_grid_off.png'
+	$("GRID_LIST_2").src='i/layout/button_list_off.png';
+	$("GRID_LIST_3").src='i/layout/button_half_on.png';	
+}
+
+}
+
+function gridlist(whatstyle){
+	
+whatsetting='2';
+
+	if (whatstyle=='0'){ //grid standard
+		Cookie.set('gridlist', '0'); 
+	if (typeof(timerView)!="undefined"){
+		clearTimeout(timerView);
+		}
+			$('ViewTypeAlert').setStyle({display:'block'});
+			$('ViewTypeAlert').update('Grid View');
+			timerView=setTimeout("Effect.Fade('ViewTypeAlert')",2000);
+	}else if (whatstyle=='1'){ //list view
+		if (typeof(timerView)!="undefined"){
+		clearTimeout(timerView);
+		}
+		Cookie.set('gridlist', '1'); 
+		$('ViewTypeAlert').setStyle({display:'block'});
+		$('ViewTypeAlert').update('List View');
+		timerView=setTimeout("Effect.Fade('ViewTypeAlert')",2000);
+	}else if (whatstyle=='2'){ //both as default
+		if (typeof(timerView)!="undefined"){
+		clearTimeout(timerView);
+		}
+		$('ViewTypeAlert').setStyle({display:'block'});
+		Cookie.set('gridlist', '2'); 
+		$('ViewTypeAlert').update('Dual View');
+		timerView=setTimeout("Effect.Fade('ViewTypeAlert')",2000);
+	}
+
+	//display only
+	
+		if (Cookie.exists('gridlist')){
+		whatsetting=Cookie.get('gridlist', '2'); //defaults to 2 - both
+		}
+	
+	gridlistI(whatsetting);
+
+if (whatsetting=='0'){ //grid
+
+	if (whatstyle!="G"){
+		if ($('display_list') == undefined){
+		}else{
+		$('display_list').hide();
+
+		}
+	}
+	if (whatstyle!="L"){
+		if ($('display_grid') == undefined){
+		}else{
+		$('display_grid').show();
+
+		}
+	}
+}else if(whatsetting=='1'){ //list view
+
+	if (whatstyle!="G"){
+		if ($('display_grid') == undefined){
+		}else{
+		$('display_grid').hide();
+		}
+	}
+	if (whatstyle!="L"){
+		if ($('display_list') == undefined){
+		}else{
+		$('display_list').show();
+		}
+	}
+}else{
+	if (whatstyle!="G"){
+		if ($('display_grid') == undefined){
+		}else{
+		$('display_grid').show();
+		}
+	}
+	if (whatstyle!="L"){
+		if ($('display_list') == undefined){
+		}else{
+		$('display_list').show();
+		}
+	}
+}
+
+
+}
+

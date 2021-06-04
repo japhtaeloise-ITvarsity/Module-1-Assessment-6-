@@ -1,0 +1,373 @@
+var horizontal_offset="9px" 
+
+var vertical_offset="0" 
+var ie=document.all
+var ns6=document.getElementById&&!document.all
+
+function getposOffset(what, offsettype){
+var totaloffset=(offsettype=="left")? what.offsetLeft : what.offsetTop;
+var parentEl=what.offsetParent;
+while (parentEl!=null){
+totaloffset=(offsettype=="left")? totaloffset+parentEl.offsetLeft : totaloffset+parentEl.offsetTop;
+parentEl=parentEl.offsetParent;
+}
+return totaloffset;
+}
+
+function iecompattest(){
+return (document.compatMode && document.compatMode!="BackCompat")? document.documentElement : document.body
+}
+
+function clearbrowseredge(obj, whichedge){
+var edgeoffset=(whichedge=="rightedge")? parseInt(horizontal_offset)*-1 : parseInt(vertical_offset)*-1
+if (whichedge=="rightedge"){
+var windowedge=ie && !window.opera? iecompattest().scrollLeft+iecompattest().clientWidth-30 : window.pageXOffset+window.innerWidth-40
+dropmenuobj.contentmeasure=dropmenuobj.offsetWidth
+if (windowedge-dropmenuobj.x < dropmenuobj.contentmeasure)
+edgeoffset=dropmenuobj.contentmeasure+obj.offsetWidth+parseInt(horizontal_offset)
+}
+else{
+var windowedge=ie && !window.opera? iecompattest().scrollTop+iecompattest().clientHeight-15 : window.pageYOffset+window.innerHeight-18
+dropmenuobj.contentmeasure=dropmenuobj.offsetHeight
+if (windowedge-dropmenuobj.y < dropmenuobj.contentmeasure)
+edgeoffset=dropmenuobj.contentmeasure-obj.offsetHeight
+}
+return edgeoffset
+}
+
+function showhint(menucontents, obj, e, tipwidth){
+if ((ie||ns6) && document.getElementById("hintbox")){
+dropmenuobj=document.getElementById("hintbox")
+dropmenuobj.innerHTML=menucontents
+dropmenuobj.style.left=dropmenuobj.style.top=-500
+if (tipwidth!=""){
+dropmenuobj.widthobj=dropmenuobj.style
+dropmenuobj.widthobj.width=tipwidth
+}
+dropmenuobj.x=getposOffset(obj, "left")
+dropmenuobj.y=getposOffset(obj, "top")
+dropmenuobj.style.left=dropmenuobj.x-clearbrowseredge(obj, "rightedge")+obj.offsetWidth+"px"
+dropmenuobj.style.top=dropmenuobj.y-clearbrowseredge(obj, "bottomedge")+"px"
+dropmenuobj.style.visibility="visible"
+obj.onmouseout=hidetip
+}
+}
+
+function hidetip(e){
+dropmenuobj.style.visibility="hidden"
+dropmenuobj.style.left="-500px"
+}
+
+function createhintbox(){
+var divblock=document.createElement("div")
+divblock.setAttribute("id", "hintbox")
+document.body.appendChild(divblock)
+}
+
+if (window.addEventListener)
+window.addEventListener("load", createhintbox, false)
+else if (window.attachEvent)
+window.attachEvent("onload", createhintbox)
+else if (document.getElementById)
+window.onload=createhintbox
+
+function MM_jumpMenu(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
+
+
+
+/* LAPTOP BUILDER GENERIC FUNCTIONS */
+function GetValue(OfWhat){
+re=/\*\*/
+if (re.test(OfWhat.value)){
+re=/\*\*(.+)/
+re.exec(OfWhat.value);
+replaceme=RegExp.$1;
+re=/\s*add R\s*/
+if(re.test(replaceme)){
+replaceme=replaceme.replace(re,"");
+return Math.floor(replaceme);
+}
+re=/\s*subtract R\s*/
+if(re.test(replaceme)){
+replaceme=replaceme.replace(re,"");
+return (Math.floor("-".replaceme));
+}}else{return 0;}}
+
+
+// Example: obj = findObj("image1");
+function findObj(theObj, theDoc)
+{
+  var p, i, foundObj;
+  if(!theDoc) theDoc = document;
+
+  if( (p = theObj.indexOf("?")) > 0 && parent.frames.length)
+  {
+    theDoc = parent.frames[theObj.substring(p+1)].document;
+    theObj = theObj.substring(0,p);
+  }
+
+  if(!(foundObj = theDoc[theObj]) && theDoc.all) foundObj = theDoc.all[theObj];
+  for (i=0; !foundObj && i < theDoc.forms.length; i++) 
+    foundObj = theDoc.forms[i][theObj];
+  for(i=0; !foundObj && theDoc.layers && i < theDoc.layers.length; i++) 
+   foundObj = findObj(theObj,theDoc.layers[i].document);
+  if(!foundObj && document.getElementById) foundObj = document.getElementById(theObj);
+  return foundObj;
+
+}
+
+
+// * Dependencies * 
+// this function requires the following snippets:
+// JavaScript/readable_MM_functions/findObj
+//
+// Accepts a variable number of arguments, in triplets as follows:
+// arg 1: simple name of a layer object, such as "Layer1"
+// arg 2: ignored (for backward compatibility)
+// arg 3: 'hide' or 'show'
+// repeat...
+// Example: showHideLayers(Layer1,'','show',Layer2,'','hide');
+
+function showHideLayers()
+{ 
+
+  var i, visStr, obj, args = showHideLayers.arguments;
+  for (i=0; i<(args.length-2); i+=3)
+  {
+    if ((obj = findObj(args[i])) != null)
+    {
+      visStr = args[i+2];
+      if (obj.style)
+      {
+        obj = obj.style;
+        if(visStr == 'show') {visStr = 'visible';}
+       else if(visStr == 'hide') {visStr = 'hidden';}
+      }
+      obj.visibility = visStr;
+    }
+  }
+}
+
+
+
+function goToAnchor(nameAnchor){
+     window.location.hash=nameAnchor;
+}
+
+
+Number.prototype.formatMoney = function(c, d, t){
+var n = this, c = isNaN(c = Math.abs(c)) ? 2 : c, d = d == undefined ? "," : d, t = t == undefined ? "." : t, s = n < 0 ? "-" : "", i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
+   return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+ };
+
+reRand = /R\d+/ 
+reNum=/\d+/
+
+function populateBagPrice(what,what2){
+
+ document.getElementById('CarryBag').value=what;
+if(what=="0**add R0"){
+
+	$("DescribeBag").update(what2);
+ 	Padd("case",0);
+}else{
+	 $("DescribeBag").update(what2);
+if (what2.match(reRand)){
+
+	mymatch = parseFloat(reNum.exec(reRand.exec(what2)));
+
+		if (mymatch!= null){
+			 Padd("case",mymatch);
+		}
+}
+}
+	
+
+ }
+
+
+/* Is it a number being typed ? */
+
+function checkIt(evt) {
+evt = (evt) ? evt : window.event
+var charCode = (evt.which) ? evt.which : evt.keyCode
+if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+status = "This field accepts numbers only."
+return false
+}
+status = ""
+return true
+}
+function isEnterKey(evt) {
+if (!evt) {evt = window.event} else if (!evt.keyCode) {evt.keyCode = evt.which}
+return (evt.keyCode == 13)}
+function processOnEnter(fld, evt) {
+if (isEnterKey(evt)) {window.focus();
+return false}
+return true}
+function QtyChg(itemn,itemv,from){this.location.href="cart.php?basketAction=Change&item="+itemn+"&qty="+itemv+"&from="+from+"&check=3336614"}
+
+function changeQty(whatQ,howmuchQ,from){	
+$("qtyDiv"+whatQ).update("<input name=\"Qty"+whatQ+"\" type=\"text\" class=\"tbox\" id=\"Qty"+whatQ+"\" onBlur=\"QtyChg("+whatQ+",this.value,'"+from+"');\" value=\""+howmuchQ+"\" size=\"2\" maxlength=\"3\" onKeyPress=\"return checkIt(event)\" onFocus=\"this.select()\" onKeyDown=\"return processOnEnter(this,event)\";><script type=\"text-javascript\">document.getElementById('Qty"+whatQ+"').select();</script><br><a href=\"#\"><img src=\"i/layout/View-refresh.png\" alt=\"refresh\" width=\"48\" height=\"48\" border=\"0\"></a>");
+
+}
+
+function gohome(){
+window.location=("//" + window.location.toString().split("//")[1].split("/")[0] + "/");
+}
+
+function numbersonly(e){
+var unicode=e.charCode? e.charCode : e.keyCode;
+
+if (unicode!=8&&unicode!=9&&unicode!=118&&unicode!=99&&unicode!=120){ //if the key isn\'t the backspace key (which we should allow)
+if (unicode<45||unicode>57) //if not a number
+return false; //disable key press
+}
+}
+
+function validRate(whatForm){
+valid=true;
+validationMessage="";
+	if (document.getElementById('Alias').value.length<2)
+        {
+            validationMessage = validationMessage + '- Your Alias or Name must contain at least 2 characters.\r\n';
+            valid = false;
+        }
+		
+		re_em=/@/
+			if (document.getElementById('EmailAddress').value.length<6||!re_em.test(document.getElementById('EmailAddress').value))
+        {
+            validationMessage = validationMessage + '- Your email address is invalid.\r\n';
+            valid = false;
+        }
+		
+
+				if (document.getElementById('Review_txt').value.length<10)
+        {
+            validationMessage = validationMessage + '- Please type a review (We do accept short reviews).\r\n';
+            valid = false;
+        }
+
+if (!valid){alert(validationMessage);return false;}
+
+ReviewSubmit();
+return false;
+}
+
+
+function darken(which){ //darken the screen on/off
+if (which==0){
+	document.getElementById("darkBackgroundLayer").style.display = "none";
+	}else{
+	document.getElementById("darkBackgroundLayer").style.display = "block";
+}
+}
+
+function fillReviews(page,product){
+
+$('addReviews').update("<p style=\"text-align:center\"><img src=\"i/layout/loading-round.gif\" width=\"50\" height=\"50\" alt=\"Loading Reviews\"><br><strong>Loading reviews..</strong></p>");
+
+
+var params = 'page='+page+'&product='+product;
+
+	var target = 'addReviews';
+	var myAjax = new Ajax.Updater(target,'__ajax-get-reviews.php', {method: 'get', parameters: params});
+	
+}
+
+
+function addToCompare(what){
+
+document.getElementById("compareDiv").style.display = "block";
+
+$('compareTag'+what).update('<a href="compare-products.php?product='+what+'" style="font-weight:normal" onClick="addToCompare(\''+what+'\');return false;" rel="nofollow">updating <img src="i/layout/promotion_tag-x.gif" alt="Compare" width="32" height="32" border="0" align="absmiddle" id="compare'+what+'"></a>');
+
+
+$('compareDiv').update('<div style="width:400px;text-align:center;padding-top:6px"  id="compareDivTxt"><a href="compare-products.php?action=display" style="color:#ff0000;font-weight:bold">Compare products here</a> &nbsp; &nbsp; <a href="compare-products.php?action=clear" style="color:#ff0000" onClick="return ClearCompare()">Clear</a></div>');
+new Effect.Shake('compareDivTxt'); 
+
+var targetATC = "compareTag"+what;
+var paramsATC = 'product='+what+'&rand='+Math.random();
+var myATC = new Ajax.Updater(targetATC,'_ajax-compare.php', {method: 'get', parameters: paramsATC});
+
+}
+
+function ClearCompare(){
+	if (confirm('You are about to to clear your comparison table.\nClick OK to proceed.')==true){
+		
+targetATC="compareDiv";
+var paramsATC = 'clearCompare=1&rand='+Math.random();
+var myATC = new Ajax.Updater(targetATC,'_ajax-compare.php', {method: 'get', parameters: paramsATC});
+
+
+
+	return false;
+	
+	}else{
+	return false;
+	}
+}
+
+function MM_jumpMenuGo(objId,targ,restore){ //v9.0
+  var selObj = null;  with (document) { 
+  if (getElementById) selObj = getElementById(objId);
+  if (selObj) eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0; }
+}
+
+function AutoGen(fname,femail,fnumber,fcell){
+	
+	if (fcell!=''&&fcell!='Cell Number'){
+		tele=fcell;
+	}else if(fnumber!=''&&fnumber!='Telephone'){
+		tele=fnumber;	
+	}else{
+		tele='';	
+	}
+	
+	if (femail==''||femail=='Email address'){
+	femail='';
+	}
+	
+	if (fname!=''&&fname!='Full Name'){
+		//space? then split ito name first/ sruname last
+		
+		if(fname.indexOf(' ') >= 0){
+		firstname=fname.split(/ (.+)?/)[0];
+		lname=fname.split(/ (.+)?/)[1];
+		}else{
+		firstname=fname;
+		lname=fname;
+		}
+	}else{
+		firstname='';
+		lname='';
+	}
+	
+	//sanitise data here
+	
+	firstname=firstname.replace("&", " [and] ");
+	lname=lname.replace("&", " [and] ");
+	fnumber=fnumber.replace("&", " [and] ");
+	fcell=fcell.replace("&", " [and] ");
+	femail=femail.replace("&", " [and] ");
+	
+
+
+		FaxNumberSpan='<input name="Fax_number" type="text" id="Fax_number" size="20" maxlength="50" value="" class="input_text_more" onFocus="this.style.color=\'#000\';if(this.value==\'Fax Number\'){this.value=\'\';}" onkeypress="return handleEnter(this, event)"> <span style="color:#060;font-weight:bold">PLEASE WAIT..</span>';
+		
+		
+		document.getElementById("FaxNumberSpan").innerHTML=FaxNumberSpan;
+		
+		
+	var myAjaxFax = new Ajax.Updater('FaxNumberSpan','_ajax-get-fax-number.php?fname='+firstname+'&sname='+lname+'&tel='+fnumber+'&cell='+fcell+'&email='+femail,{method: 'get'});
+
+	//window.open(  'http://emailfax.co.za?message=CREATE%20NUMBER%20Please%20complete%20the%20form%20to%20receive%20your%20free%20fax%20number&fname='+firstname+'&lname='+lname+'&number='+tele+'&email='+femail, '_blank');
+	
+	return false;
+}
+
+
